@@ -18,9 +18,15 @@ def score_dataframe(df):
     result["risk_score"] = scores
     result["risk_percent"] = (scores * 100).round(2)
 
-    result["priority"] = result["risk_score"].apply(
-        lambda x: "High Priority" if x >= 0.7 else "Low Priority"
-    )
+    def assign_priority(score):
+        if score >= 0.7:
+            return "High Priority"
+        elif score >= 0.4:
+            return "Medium Priority"
+        else:
+            return "Low Priority"
+
+    result["priority"] = result["risk_score"].apply(assign_priority)
 
     result = result.sort_values("risk_score", ascending=False)
 

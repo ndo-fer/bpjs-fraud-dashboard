@@ -51,15 +51,17 @@ if uploaded_file is not None:
 
         total_claim = len(result)
         high_priority = (result["priority"] == "High Priority").sum()
+        medium_priority = (result["priority"] == "Medium Priority").sum()
         low_priority = (result["priority"] == "Low Priority").sum()
         avg_risk = result["risk_percent"].mean().round(2)
 
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5 = st.columns(5)
 
         col1.metric("Total Klaim", total_claim)
         col2.metric("High Priority", high_priority)
-        col3.metric("Low Priority", low_priority)
-        col4.metric("Rata-rata Risiko", f"{avg_risk}%")
+        col3.metric("Medium Priority", medium_priority)
+        col4.metric("Low Priority", low_priority)
+        col5.metric("Rata-rata Risiko", f"{avg_risk}%")
 
         st.subheader("Hasil Risk Scoring")  
         output_cols = ["priority", "risk_percent", "risk_score"]
