@@ -1,0 +1,20 @@
+{
+  "description": "Info model dashboard-v2. Model dilatih dengan 10 fitur utama (simplified dari full pipeline).",
+  "winner_model": "xgboost",
+  "n_features": 10,
+  "model_features": [
+    "fktp_hist_count_before",
+    "flag_kelas_upgrade",
+    "flag_status_nonaktif",
+    "jumlah_diagnosis_sekunder",
+    "lama_rawat_hari",
+    "nonkap_hist_count_before",
+    "severity_level",
+    "tarif_disetujui",
+    "total_special_cmg",
+    "usia"
+  ],
+  "threshold_high": 0.7,
+  "threshold_medium": 0.4,
+  "note": "Model ini adalah versi simplified dari full pipeline (27 fitur) untuk keperluan demo dashboard."
+}

@@ -1,4 +1,14 @@
-﻿FEATURES = [
+"""
+schema.py
+---------
+Mendefinisikan fitur-fitur yang digunakan oleh model trained.
+
+winner_model.joblib di dashboard-v2 adalah model simplified yang dilatih
+dengan 10 fitur utama (bukan 27 fitur dari notebook nb-sidang penuh).
+"""
+
+# ── Fitur yang dibutuhkan model (10 fitur) ───────────────────────────────────
+USER_INPUT_FEATURES = [
     "fktp_hist_count_before",
     "flag_kelas_upgrade",
     "flag_status_nonaktif",
@@ -11,18 +21,24 @@
     "usia",
 ]
 
+# Alias untuk kompatibilitas
+FEATURES          = USER_INPUT_FEATURES
+ALL_MODEL_FEATURES = USER_INPUT_FEATURES
+
+# ── Label tampilan (Indonesia) ───────────────────────────────────────────────
 FEATURE_LABELS = {
-    "fktp_hist_count_before": "Riwayat Kunjungan FKTP",
-    "flag_kelas_upgrade": "Upgrade Kelas",
-    "flag_status_nonaktif": "Status Kepesertaan Nonaktif",
+    "fktp_hist_count_before":    "Riwayat Kunjungan FKTP",
+    "flag_kelas_upgrade":        "Upgrade Kelas",
+    "flag_status_nonaktif":      "Status Kepesertaan Nonaktif",
     "jumlah_diagnosis_sekunder": "Jumlah Diagnosis Sekunder",
-    "lama_rawat_hari": "Lama Rawat (Hari)",
-    "nonkap_hist_count_before": "Riwayat Non-Kapitasi",
-    "severity_level": "Severity Level",
-    "tarif_disetujui": "Tarif Disetujui",
-    "total_special_cmg": "Total Special CMG",
-    "usia": "Usia",
-    "risk_score": "Skor Risiko",
-    "risk_percent": "Persentase Risiko",
-    "priority": "Prioritas Verifikasi",
+    "lama_rawat_hari":           "Lama Rawat (Hari)",
+    "nonkap_hist_count_before":  "Riwayat Non-Kapitasi",
+    "severity_level":            "Severity Level",
+    "tarif_disetujui":           "Tarif Disetujui",
+    "total_special_cmg":         "Total Special CMG",
+    "usia":                      "Usia",
+    # Output
+    "risk_score":                "Skor Risiko",
+    "risk_percent":              "Persentase Risiko",
+    "priority":                  "Prioritas Verifikasi",
 }
