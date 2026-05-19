@@ -14,6 +14,13 @@ st.title("Dashboard Prioritas Verifikasi Klaim")
 st.warning(
     "Output model adalah indikasi risiko untuk prioritas verifikasi, bukan keputusan fraud final."
 )
+with open("data/batch_template.csv", "rb") as file:
+    st.download_button(
+        label="Download Template CSV",
+        data=file,
+        file_name="batch_template.csv",
+        mime="text/csv"
+    )
 
 uploaded_file = st.file_uploader(
     "Upload CSV klaim",
@@ -30,8 +37,13 @@ if uploaded_file is not None:
 
     if missing_cols:
         readable_missing = [FEATURE_LABELS.get(col, col) for col in missing_cols]
-        st.error("Kolom berikut belum ada di file CSV:")
-        st.write(readable_missing)
+
+        st.error("Format CSV belum sesuai.")
+        st.write("Kolom yang belum ada:")
+        for col in readable_missing:
+            st.markdown(f"- {col}")
+
+        st.info("Silakan download template CSV di atas, lalu isi data sesuai format tersebut.")
     else:
         result = score_dataframe(df)
 
