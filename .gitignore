@@ -1,3 +1,24 @@
-﻿.venv/
+# Python
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data sensitif (jangan push data asli pasien)
+data/*.csv
+!data/batch_template.csv
+
+# Temporary / OS
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
