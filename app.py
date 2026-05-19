@@ -1,5 +1,6 @@
 ﻿import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from utils.scoring import score_dataframe
 from utils.schema import FEATURES, FEATURE_LABELS
@@ -62,6 +63,19 @@ if uploaded_file is not None:
         col3.metric("Medium Priority", medium_priority)
         col4.metric("Low Priority", low_priority)
         col5.metric("Rata-rata Risiko", f"{avg_risk}%")
+
+        priority_counts = result["priority"].value_counts().reset_index()
+        priority_counts.columns = ["Prioritas", "Jumlah"]
+
+        fig = px.bar(
+            priority_counts,
+            x="Prioritas",
+            y="Jumlah",
+            text="Jumlah",
+            title="Distribusi Prioritas Verifikasi"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
         st.subheader("Hasil Risk Scoring")  
         output_cols = ["priority", "risk_percent", "risk_score"]
