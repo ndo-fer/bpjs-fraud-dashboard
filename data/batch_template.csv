@@ -1,4 +1,3 @@
-fktp_hist_count_before,flag_kelas_upgrade,flag_status_nonaktif,jumlah_diagnosis_sekunder,lama_rawat_hari,nonkap_hist_count_before,severity_level,tarif_disetujui,total_special_cmg,usia
-0,0,0,2,3,1,1,2500000,0,45
-2,1,0,5,8,3,3,12000000,1,62
-1,0,1,3,5,0,2,5000000,0,38
+usia,tarif_disetujui,lama_rawat_hari,severity_level_num,jumlah_diagnosis_sekunder,fktp_hist_count_before,nonkap_hist_count_before,flag_kelas_upgrade,flag_status_nonaktif,flag_meninggal,flag_rawat_inap,flag_special_cmg,total_special_cmg,jenis_kelamin,hubungan_keluarga,kelas_rawat_hak,kelas_rawat_klaim,segmen_kepesertaan,status_kepesertaan,kepemilikan_fktp,jenis_fktp,tingkat_layanan,poli_tujuan,segmen_peserta_klaim,status_pulang,kepemilikan_faskes,jenis_faskes,tipe_faskes,jenis_pelayanan,grup_diagnosis_utama,kode_diagnosis_utama,grup_tindakan_utama,kode_tindakan_utama,jenis_inacbg,kategori_tindakan,regional_tarif_num,flag_rujukan_missing,tarif_inacbg_dasar,tarif_grouping,jumlah_special_cmg_aktif,jumlah_grup_diagnosis_sekunder,nonkap_hist_total_before,nonkap_hist_mean_before
+45,2500000,3,2,2,0,1,0,0,0,1,0,0,1,1,3,3,2,1,1,1,2,14,5,1,2,3,4,1,INFEKSI,A09,PROSEDUR_NON_BEDAH,99.1,1,1,2200000,2500000,0,2,150000,150000
+62,12000000,8,3,5,2,3,1,0,0,1,1,1,2,2,2,1,3,1,2,2,2,9,3,2,1,4,2,2,KARDIO,I21,TINDAKAN_BEDAH,36.1,2,3,9800000,12000000,1,4,5000000,1666666.67

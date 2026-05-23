@@ -6,6 +6,9 @@ __pycache__/
 *.pyd
 .Python
 
+# Environment / Secrets (JANGAN commit ke GitHub)
+.env
+
 # Streamlit
 .streamlit/secrets.toml
 

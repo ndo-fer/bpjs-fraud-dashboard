@@ -1,9 +1,8 @@
-﻿import joblib
+from utils.scoring import load_artifacts
 
-model = joblib.load("models/winner_model.joblib")
+artifacts = load_artifacts()
+info = artifacts["winner_info"]
 
-print("MODEL BERHASIL DILOAD")
-print(type(model))
-
-print("\nFEATURES:")
-print(model.feature_names_in_)
+print("ARTIFACT BERHASIL DILOAD")
+print(type(artifacts["clf"]))
+print(info["winner_features"])
