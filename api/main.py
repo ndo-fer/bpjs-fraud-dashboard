@@ -7,6 +7,7 @@ batches, history, audit log, dan user management.
 from __future__ import annotations
 
 import uuid
+import hashlib
 from datetime import datetime, timezone
 from typing import Any
 
@@ -24,11 +25,13 @@ from api.database import (
     fetch_claim_by_id,
     fetch_history,
     fetch_users,
+    fetch_user_by_email,
     insert_audit,
     insert_batch,
     insert_scoring,
     update_claim_status as db_update_claim_status,
     upsert_claim,
+    upsert_user,
 )
 from utils.schema import USER_INPUT_FEATURES
 from utils.scoring import (
@@ -38,6 +41,7 @@ from utils.scoring import (
     load_model_metadata,
     score_dataframe,
 )
+from api.auth_db import save_credentials, get_credentials
 
 app = FastAPI(
     title="VerifiKlaim API",
@@ -118,6 +122,27 @@ class AuditEventIn(BaseModel):
     entity_id: str
     detail: str
     category: str
+
+
+class RegisterUser(BaseModel):
+    name: str
+    email: str
+    password: str
+    role: str
+    org: str
+
+class LoginUser(BaseModel):
+    email: str
+    password: str
+
+class AuthResponse(BaseModel):
+    id: str
+    name: str
+    email: str
+    role: str
+    org: str
+    status: str
+    lastActive: str | None = None
 
 
 # ── Internal helpers ───────────────────────────────────────────────
@@ -227,6 +252,18 @@ def health():
         "model_version": info.get("winner_label", "winner_model"),
         "threshold_reference": str(info.get("threshold", THRESHOLD_HIGH)),
     }
+
+@app.get("/schema")
+def schema():
+    from api.database import _get_service_client, TABLE_USERS
+    client = _get_service_client()
+    res = client.table(TABLE_USERS).select("*").limit(1).execute()
+    cols = list(res.data[0].keys()) if res.data else []
+    return {"columns": cols, "raw_data": res.data}
+
+
+
+
 
 
 # ── Single Claim Scoring ───────────────────────────────────────────
@@ -462,6 +499,81 @@ def create_audit(body: AuditEventIn):
 def list_users():
     try:
         data = fetch_users()
-        return {"total": len(data), "records": data}
+        # hide passwords and rename last_active -> lastActive
+        records = []
+        for r in data:
+            r.pop("password_hash", None)
+            if "last_active" in r:
+                r["lastActive"] = r.pop("last_active")
+            records.append(r)
+        return {"total": len(records), "records": records}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ── Auth ───────────────────────────────────────────────────────────
+
+def _hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+@app.post("/auth/register", response_model=AuthResponse)
+def register(body: RegisterUser):
+    try:
+        existing = fetch_user_by_email(body.email)
+        if existing:
+            raise HTTPException(status_code=400, detail="Email sudah terdaftar.")
+        
+        user_id = f"usr-{str(uuid.uuid4())[:8]}"
+        user_record = {
+            "id": user_id,
+            "name": body.name,
+            "email": body.email,
+            "role": body.role,
+            "org": body.org,
+            "status": "Active",
+            "lastActive": now_iso(),
+        }
+        
+        # Save password locally to SQLite
+        hashed_pw = _hash_password(body.password)
+        save_credentials(body.email, hashed_pw)
+        
+        # Save user info to Supabase without password_hash
+        upsert_user(user_record)
+        return AuthResponse(**user_record)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+@app.post("/auth/login", response_model=AuthResponse)
+def login(body: LoginUser):
+    try:
+        user = fetch_user_by_email(body.email)
+        if not user:
+            raise HTTPException(status_code=401, detail="Email atau password salah.")
+        
+        # Get password hash from local SQLite
+        hashed = get_credentials(body.email)
+        if not hashed:
+            raise HTTPException(status_code=401, detail="Email atau password salah.")
+        
+        # Check password
+        input_hashed = _hash_password(body.password)
+        if hashed != input_hashed:
+            raise HTTPException(status_code=401, detail="Email atau password salah.")
+            
+        if user.get("status") == "Inactive":
+            raise HTTPException(status_code=403, detail="Akun tidak aktif.")
+            
+        # Update lastActive
+        user["lastActive"] = now_iso()
+        user.pop("last_active", None)
+        user.pop("password_hash", None)
+        upsert_user(user)
+        
+        return AuthResponse(**user)
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

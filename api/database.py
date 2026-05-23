@@ -320,6 +320,17 @@ def fetch_users() -> list[dict[str, Any]]:
     return response.data
 
 
+def fetch_user_by_email(email: str) -> dict[str, Any] | None:
+    client = _get_service_client()
+    response = client.table(TABLE_USERS).select("*").eq("email", email).limit(1).execute()
+    if response.data:
+        return response.data[0]
+    return None
+
 def upsert_user(user: dict[str, Any]) -> None:
     client = _get_service_client()
-    client.table(TABLE_USERS).upsert(user, on_conflict="id").execute()
+    mapped = {**user}
+    if "lastActive" in mapped:
+        mapped["last_active"] = mapped.pop("lastActive")
+    client.table(TABLE_USERS).upsert(mapped, on_conflict="id").execute()
+
